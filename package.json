@@ -1,5 +1,5 @@
 {
-  "name": "postcss-px-to-remvw",
+  "name": "postcss-convert-px-to-vw",
   "version": "1.0.0",
   "description": "Convert px to rem or vw",
   "main": "index.js",
@@ -23,7 +23,7 @@
   "author": "issac <issac360@live.cn>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/topit/postcss-px-to-remvw"
+    "url": "https://github.com/topit/postcss-convert-px-to-vw"
   },
   "license": "ISC",
   "devDependencies": {
