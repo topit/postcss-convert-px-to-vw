@@ -3,14 +3,13 @@
 用于转换 px 单位至 rem 和 vw 单位。
 
 ## install
----
 
 ```shell
 npm i postcss-px-to-remvw
 ```
 
 ## Options
----
+
 - `baseSize`: 转换基准，默认 `{ rem: 75, vw: 7.5 }`，如原始大小为 `36px` ,则转换后为 `0.48rem` 和 `4.8vw`。
 - `precision`: 默认 `6` ，转换保留有效位数。
 - `forceRemProps`: 只生成 `rem` 单位，不生成 `vw` 单位的属性。
@@ -20,7 +19,7 @@ npm i postcss-px-to-remvw
 - `toVw`: 默认 `true`，是否生成 `vw` 单位。
 
 ## Usage
----
+
 ### Postcss
 
 ```javascript
