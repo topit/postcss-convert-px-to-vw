@@ -57,7 +57,7 @@ npm i postcss-px-to-remvw
             precision: 6,
             forceRemProps: [ 'font', 'font-size' ],
             keepRuleComment: 'no',
-            keepFileComment: 'pxconverter-disable',
+            keepFileComment: 'pxtoremvw-disable',
             toVw: shouldPostCssGenVw,
             toRem: shouldPostCssGenRem
           }),

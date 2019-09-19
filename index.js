@@ -1,1 +1,1 @@
-module.exports = require('./lib/postcss-px-to-remvw')
+module.exports = require('./lib/postcss-convert-px-to-vw')

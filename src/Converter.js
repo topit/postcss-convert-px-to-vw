@@ -1,5 +1,4 @@
 import css from 'css'
-import { extend, deepMerge } from './utils'
 
 const pxRegExp = /\b(\d+(\.\d+)?)px\b/
 const pxGlobalRegExp = new RegExp(pxRegExp.source, 'g')
@@ -17,7 +16,7 @@ const defaultConfig = {
 
 export default class PxConverter {
   constructor(options = {}) {
-    this.config = extend({}, defaultConfig, options)
+    this.config = Object.assign({}, defaultConfig, options)
     // this.originConfig = deepMerge(this.config)
   }
 
