@@ -1,0 +1,18 @@
+body {
+  font-size: 0.24rem;
+}
+
+.input {
+  font-size: 0.32rem;
+  border: 2px solid #eee;
+  /*no*/
+  line-height: 0.48rem;
+  line-height: 4.8vw;
+}
+
+.i {
+  width: 1.6rem;
+  width: 16vw;
+  height: 2.666667rem;
+  height: 26.666667vw;
+}
