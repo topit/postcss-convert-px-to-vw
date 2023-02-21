@@ -1,4 +1,17 @@
-import css from 'css'
+import css, { StyleRules } from 'css'
+
+export interface Options {
+  baseSize?: {
+    rem?: number;
+    vw?: number;
+  };
+  precision?: number;
+  forceRemProps?: string[];
+  keepRuleComment?: string;
+  keepFileComment?: string;
+  toRem?: boolean;
+  toVw?: boolean;
+}
 
 const pxRegExp = /\b(\d+(\.\d+)?)px\b/
 const pxGlobalRegExp = new RegExp(pxRegExp.source, 'g')
@@ -9,24 +22,24 @@ const defaultConfig = {
   keepRuleComment: 'no',
   keepFileComment: 'pxtoremvw-disable',
   toRem: true,
-  // disableToRemComment: 'pxtoremvw-disable-rem',
   toVw: true,
-  // disableToVwComment: 'pxtoremvw-disable-vw',
 }
 
 export default class PxConverter {
-  constructor(options = {}) {
+  config: Options
+
+  constructor(options: Options = {}) {
     this.config = Object.assign({}, defaultConfig, options)
     // this.originConfig = deepMerge(this.config)
   }
 
-  convert(cssText) {
+  convert(cssText: string) {
     const astObj = css.parse(cssText)
-    const firstRule = astObj.stylesheet.rules[0]
+    const firstRule = astObj.stylesheet!.rules[0]
     if (!firstRule) return cssText
     // 忽略整个文件
     const isDisabled = firstRule.type === 'comment' &&
-      firstRule.comment.trim() === this.config.keepFileComment
+      (firstRule as css.Comment)?.comment?.trim() === this.config.keepFileComment
     if (isDisabled) return cssText
 
     // const disableToVw = firstRule.type === 'comment' &&
@@ -45,42 +58,42 @@ export default class PxConverter {
     //   this.config.toRem = this.originConfig.toRem
     // }
 
-    this.processRules(astObj.stylesheet.rules)
+    this.processRules(astObj?.stylesheet?.rules)
     return css.stringify(astObj)
   }
 
-  processRules(rules) {
-    rules.forEach(rule => {
-      if (rule.type === 'media') return this.processRules(rule.rules)
-      if (rule.type === 'keyframes') return this.processRules(rule.keyframes)
+  processRules(rules?: StyleRules['rules']) {
+    rules?.forEach(rule => {
+      if (rule.type === 'media') return this.processRules((rule as css.Media).rules)
+      if (rule.type === 'keyframes') return this.processRules((rule as css.KeyFrames).keyframes)
       if (rule.type !== 'rule' && rule.type !== 'keyframe') return
 
-      const processDeclarations = index => {
-        const dec = rule.declarations[index]
+      const processDeclarations = (index: number): void => {
+        const dec = (rule as css.Rule)?.declarations?.[index]
         if (!dec) return
 
         // 必须为可转换的规则，否则去下一条
-        if (dec.type !== 'declaration' || !pxRegExp.test(dec.value)) return processDeclarations(index + 1)
+        if (dec.type !== 'declaration' || !pxRegExp.test((dec as css.Declaration)?.value ?? '')) return processDeclarations(index + 1)
 
         // 如果下一条规则为禁用注释，一起跳过
-        const nextDec = rule.declarations[index + 1]
+        const nextDec = (rule as css.Rule)?.declarations?.[index + 1]
         const isDisabled = nextDec &&
           nextDec.type === 'comment' &&
-          nextDec.comment.trim() === this.config.keepRuleComment
+          (nextDec as css.Comment)?.comment?.trim() === this.config.keepRuleComment
         if (isDisabled) {
           return processDeclarations(index + 2)
         }
 
-        const sourceValue = dec.value
+        const sourceValue = (dec as css.Declaration)?.value ?? ''
         // 将原本的 px 替换为 rem
         if (this.config.toRem) {
-          dec.value = this.getCalcValue('rem', sourceValue)
+          (dec as css.Declaration).value = this.getCalcValue('rem', sourceValue)
         }
         // 增加一条更高级的 vw 规则用于覆盖
-        if (this.config.toVw && this.config.forceRemProps.indexOf(dec.property) === -1) {
-          rule.declarations.splice(index + 1, 0, {
+        if (this.config.toVw && this.config.forceRemProps?.indexOf((dec as css.Declaration)?.property ?? '') === -1) {
+          (rule as css.Rule)?.declarations?.splice(index + 1, 0, {
             type: 'declaration',
-            property: dec.property,
+            property: (dec as css.Declaration).property,
             value: this.getCalcValue('vw', sourceValue),
           })
           processDeclarations(index + 2)
@@ -93,8 +106,8 @@ export default class PxConverter {
     })
   }
 
-  getCalcValue(targetUnit, sourceValue) {
-    const baseSize = this.config.baseSize[targetUnit]
+  getCalcValue(targetUnit: 'rem' | 'vw', sourceValue: string) {
+    const baseSize = this.config.baseSize![targetUnit]!
     if (!baseSize) return sourceValue
 
     return sourceValue.replace(pxGlobalRegExp, ($0, $1) => {

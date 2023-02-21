@@ -3,18 +3,24 @@
   "version": "1.0.1",
   "description": "Convert px to rem or vw",
   "main": "index.js",
+  "types": "lib/postcss-convert-px-to-vw.d.ts",
+  "module": "lib/postcss-convert-px-to-vw.mjs",
   "files": [
     "lib",
     "src"
   ],
+  "exports": {
+    ".": {
+      "types": "./lib/postcss-convert-px-to-vw.d.ts",
+      "import": "./lib/postcss-convert-px-to-vw.mjs",
+      "require": "./lib/postcss-convert-px-to-vw.cjs",
+      "default": "./lib/postcss-convert-px-to-vw.mjs"
+    }
+  },
   "scripts": {
-    "clean": "rimraf lib/**/*",
-    "watch": "rollup --config ./scripts/rollup.config.js --environment NODE_ENV:development,TARGET:development -w",
-    "build": "npm run clean && npm run lint && npm run build:prod",
-    "build:dev": "rollup --config ./scripts/rollup.config.js --environment NODE_ENV:development",
-    "build:prod": "rollup --config ./scripts/rollup.config.js --environment NODE_ENV:production",
-    "lint": "eslint src/ --ext '.js' --fix -f eslint-formatter-friendly",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "tsup --watch",
+    "build": "tsup",
+    "example:node": "jiti ./examples/node/index.ts"
   },
   "keywords": [
     "postcss",
@@ -26,35 +32,17 @@
     "url": "https://github.com/topit/postcss-convert-px-to-vw"
   },
   "license": "ISC",
-  "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "babel-eslint": "^10.0.3",
-    "babel-jest": "^24.9.0",
-    "chalk": "^2.4.2",
-    "cross-env": "^6.0.0",
-    "eslint": "^6.4.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-formatter-friendly": "^7.0.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "is-wsl": "^2.1.0",
-    "jest": "^24.9.0",
-    "rimraf": "^3.0.0",
-    "rollup": "^1.21.4",
-    "rollup-plugin-alias": "^2.0.0",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-eslint": "^7.0.0",
-    "rollup-plugin-filesize": "^6.2.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-terser": "^5.1.2"
-  },
   "dependencies": {
-    "css": "^2.2.4",
-    "postcss": "^7.0.18"
+    "css": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/css": "0.0.33",
+    "jiti": "^1.17.1",
+    "postcss": "^8.4.21",
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "postcss": ">=8"
   }
 }
